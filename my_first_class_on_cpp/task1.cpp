@@ -154,16 +154,65 @@ public:
 		return newData[0];
 	}
 
-	int extract(int index);
+	int extract(int index)
+	{
+		int* newData = (int*)malloc(sizeof(int) * (this->len - 1));
+
+		for (int i = 0; i < index; i++)
+		{
+			newData[i] = this->data[i];
+		}
+
+		int ans = this->data[index];
+
+		for (int i = index + 1; i < this->len; i++)
+		{
+			newData[i - 1] = this->data[i];
+		}
+
+		this->len = this->len - 1;
+		this->data = (int*)malloc(sizeof(int) * (this->len));
+
+		for (int i = 0; i < this->len; i++)
+		{
+			this->data[i] = newData[i];
+		}
+		return ans;
+	}
 
 	void insert(int index, int element)
 	{
-		
+		this->data[index] = element;
 	}
 
-	void reverse(int start, int end);
+	void reverse(int start, int end)
+	{
+		int* between_data = (int*)malloc(sizeof(int) * (end - start));
 
-	int sum();
+		int j = start;
+		for (int i = end; i >= start; i--)
+		{
+			between_data[j] = this->data[i];
+			j++;
+		}
+
+		for (int i = start; i <= end; i++)
+		{
+			this->data[i] = between_data[i];
+		}
+
+	}
+
+	int sum()
+	{
+		int ans = 0;
+
+		for (int i = 0; i < this->len; i++)
+		{
+			ans = ans + this->data[i];
+		}
+		return ans;
+	}
 
 	int secondMax();
 
@@ -188,10 +237,10 @@ public:
 
 int main(int argc, char* argv[])
 {
-	ArrayList list(10);
+	ArrayList list(6);
 	list.randomize();
 	list.print();
-	list.popFront();
+	list.reverse(1, 1);
 	list.print();
 
 	return 0;
