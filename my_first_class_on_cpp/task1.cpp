@@ -7,10 +7,12 @@ class ArrayList
 private:
 	int len;
 	int* data;
+	int* sorted_data;
 	void init(int len = 10)
 	{
 		this->len = len;
 		this->data = (int*)malloc(sizeof(int) * len);
+		this->sorted_data = (int*)malloc(sizeof(int) * len);
 	}
 	bool indexValid(int index)
 	{
@@ -40,6 +42,7 @@ public:
 	~ArrayList()
 	{
 		free(this->data);
+		free(this->sorted_data);
 	}
 
 	void randomize(int min = 10, int max = 99)
@@ -214,33 +217,113 @@ public:
 		return ans;
 	}
 
-	int secondMax();
+	int secondMax() 
+	{
+		this->update_sorted_list();
+		return this->sorted_data[this->len - 2];
+	}
 
-	int lastMinIndex();
 
-	int shift(int k);
+	int lastMinIndex()
+	{
+		this->update_sorted_list();
+		for (int i = 0; i < this->len; i++) 
+		{
+			if (this->data[i] = this->sorted_data[0])
+			{
+				return i;
+			}
+		}
+	}
 
-	int countOdd();
+	void shift(int k)
+	{
+		int* newData = (int*)malloc(sizeof(int) * (this->len));
+		for (int i = 0; i < this->len; i++)
+		{
+			newData[i] = this->data[i];
+		}
 
-	int sumEven();
+
+		for (int i = 0; i < this->len; i++)
+		{
+			this->data[(i + k) % this->len] = newData[i];
+		}
+
+	}
+
+
+	int countOdd()
+	{
+		int ans = 0;
+		for (int i = 0; i < this->len; i++)
+		{
+			if (this->data[i] % 2 == 1)
+			{
+				ans = ans + 1;
+			}
+		}
+		cout << ans << endl;
+		return ans;
+	}
+
+	int sumEven()
+	{
+		int ans = 0;
+		for (int i = 0; i < this->len; i++)
+		{
+			if (this->data[i] % 2 == 0)
+			{
+				ans = ans + this->data[i];
+			}
+		}
+		return ans;
+	}
+
+
+	void update_sorted_list()
+	{
+		this->sorted_data = (int*)malloc(sizeof(int) * this->len);
+		for (int i = 0; i < this->len; i++)
+		{
+			this->sorted_data[i] = this->data[i];
+		}
+		this->quicksort(0, this->len - 1);
+	}
+
+	void quicksort(int left, int right)
+	{
+		if (left > right) {return;}
+		int opr = this->sorted_data[(left + right) / 2];
+		int i = left;
+		int j = right;
+		while (i <= j)
+		{
+			while (this->sorted_data[i] < opr) i++;
+			while (this->sorted_data[j] > opr) j--;
+			if (i <= j) 
+			{
+				int tmp = this->sorted_data[i];
+				this->sorted_data[i] = this->sorted_data[j];
+				this->sorted_data[j] = tmp;
+				i++;
+				j--;
+			}
+		}
+		this->quicksort(left, j);
+		this->quicksort(i, right);
+	}
 };
 
-//int max(ArrayList list)
-//{
-//	int mx = list.get(0);
-//	for (int i = 0; i < list.count(); ++i)
-//	{
-//		mx = (mx > list.get(i) ? mx : list.get(i));
-//	}
-//	return mx;
-//}
 
 int main(int argc, char* argv[])
 {
-	ArrayList list(6);
+	int n = 5;
+	ArrayList list(n);
+
 	list.randomize();
 	list.print();
-	list.reverse(1, 1);
+	list.shift(3);
 	list.print();
 
 	return 0;
